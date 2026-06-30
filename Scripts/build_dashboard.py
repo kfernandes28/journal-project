@@ -5,7 +5,11 @@ import json
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 
-DATA_PATH = BASE_DIR / "Data" / "Thoughts.csv"
+PRIVATE_DATA_PATH = BASE_DIR / "Data" / "Thoughts.csv"
+SAMPLE_DATA_PATH = BASE_DIR / "Data" / "sample_thoughts.csv"
+
+DATA_PATH = PRIVATE_DATA_PATH if PRIVATE_DATA_PATH.exists() else SAMPLE_DATA_PATH
+
 OUT_DIR = BASE_DIR / "Dashboard"
 OUT_PATH = OUT_DIR / "index.html"
 

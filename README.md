@@ -37,19 +37,44 @@ docs/        → Screenshots and documentation
 
 ## How to Run
 
-1. Install dependencies:
+1. Clone the repository
 
+```bash
+git clone <repo-url>
+cd journal-project
 ```
+
+2. Create a virtual environment
+
+```bash
+python3 -m venv venv
+```
+
+3. Activate it
+
+macOS / Linux
+
+```bash
+source venv/bin/activate
+```
+
+Windows
+
+```bash
+venv\Scripts\activate
+```
+
+4. Install dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-2. Run the dashboard script:
+5. Run
 
+```bash
+python Scripts/build_dashboard.py
 ```
-python Scripts/<main_script>.py
-```
-
-3. Open the generated HTML file in your browser.
 
 ---
 
