@@ -126,6 +126,16 @@ def main():
                 background: white;
             }}
 
+            input[type="search"] {{
+                font-size: 18px;
+                padding: 10px 14px;
+                border-radius: 12px;
+                border: 1px solid #d8cec2;
+                background: white;
+                flex: 1;
+                min-width: 220px;
+            }}
+
             .stat {{
                 color: #6f665e;
                 font-size: 15px;
@@ -203,6 +213,12 @@ def main():
                 <div class="stat">
                     <strong id="wordCount"></strong> words
                 </div>
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search thoughts..."
+                >
             </section>
 
             <section id="thoughts">
@@ -213,26 +229,55 @@ def main():
         <script>
             const stats = {json.dumps(stats)};
 
-            function updateYear() {{
+            function updateView() {{
                 const selectedYear = document.getElementById("yearSelect").value;
+                const searchTerm = document
+                    .getElementById("searchInput")
+                    .value
+                    .toLowerCase()
+                    .trim();
+
                 const cards = document.querySelectorAll(".thought-card");
 
+                let visibleCount = 0;
+                let visibleWords = 0;
+
                 cards.forEach(card => {{
-                    card.classList.toggle(
-                        "hidden",
-                        card.dataset.year !== selectedYear
-                    );
+                    const cardYear = card.dataset.year;
+                    const cardText = card.innerText.toLowerCase();
+
+                    const matchesYear = cardYear === selectedYear;
+                    const matchesSearch =
+                        searchTerm === "" || cardText.includes(searchTerm);
+
+                    const isVisible = matchesYear && matchesSearch;
+
+                    card.classList.toggle("hidden", !isVisible);
+
+                    if (isVisible) {{
+                        visibleCount += 1;
+                        visibleWords += card
+                            .querySelector(".thought-text")
+                            .innerText
+                            .split(/\s+/)
+                            .filter(Boolean)
+                            .length;
+                    }}
                 }});
 
-                document.getElementById("entryCount").textContent =
-                    stats[selectedYear]["entries"];
-
-                document.getElementById("wordCount").textContent =
-                    stats[selectedYear]["words"];
+                document.getElementById("entryCount").textContent = visibleCount;
+                document.getElementById("wordCount").textContent = visibleWords;
             }}
 
-            document.getElementById("yearSelect").addEventListener("change", updateYear);
-            updateYear();
+            document
+                .getElementById("yearSelect")
+                .addEventListener("change", updateView);
+
+            document
+                .getElementById("searchInput")
+                .addEventListener("input", updateView);
+
+            updateView();
         </script>
     </body>
     </html>
