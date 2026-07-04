@@ -141,6 +141,12 @@ def main():
                 font-size: 15px;
             }}
 
+            .result-summary {{
+                color: #6f665e;
+                font-size: 15px;
+                margin: -16px 0 26px;
+            }}
+
             .stat strong {{
                 color: #1f1f1f;
             }}
@@ -221,6 +227,7 @@ def main():
                 >
             </section>
 
+            <div id="resultSummary" class="result-summary"></div>
             <section id="thoughts">
                 {thoughts_html}
             </section>
@@ -267,6 +274,15 @@ def main():
 
                 document.getElementById("entryCount").textContent = visibleCount;
                 document.getElementById("wordCount").textContent = visibleWords;
+
+                const summary = document.getElementById("resultSummary");
+
+                if (searchTerm === "") {{
+                    summary.textContent = "";
+                }} else {{
+                    summary.textContent =
+                        `Showing ${{visibleCount}} matching reflections in ${{selectedYear}}`;
+                }}
             }}
 
             document
