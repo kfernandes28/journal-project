@@ -36,11 +36,14 @@ def main():
     thoughts_html = ""
 
     for _, row in df.iterrows():
-        safe_text = html.escape(str(row["text"])).replace("\n", "<br>")
+        raw_text = str(row["text"])
+
+        safe_text = html.escape(raw_text).replace("\n", "<br>")
+        safe_search_text = html.escape(raw_text, quote=True)
         safe_date = html.escape(str(row["date_label"]))
 
         thoughts_html += f"""
-        <article class="thought-card" data-year="{row['year']}">
+        <article class="thought-card" data-year="{row['year']}" data-text="{safe_search_text}">
             <div class="thought-date">{safe_date}</div>
             <div class="thought-text">{safe_text}</div>
         </article>
@@ -194,6 +197,13 @@ def main():
                     align-items: flex-start;
                 }}
             }}
+            mark {{
+                background: #edd48a;
+                color: inherit;
+                font-weight: 600;
+                padding: 0 2px;
+                border-radius: 3px;
+            }}
         </style>
     </head>
 
@@ -236,6 +246,17 @@ def main():
         <script>
             const stats = {json.dumps(stats)};
 
+            function escapeRegex(text) {{
+                const specials = ["\\\\", ".", "*", "+", "?", "^", "$", "{{", "}}", "(", ")", "|", "[", "]"];
+                let escaped = text;
+
+                specials.forEach(char => {{
+                    escaped = escaped.split(char).join("\\\\" + char);
+                }});
+
+                return escaped;
+            }}
+
             function updateView() {{
                 const selectedYear = document.getElementById("yearSelect").value;
                 const searchTerm = document
@@ -251,21 +272,30 @@ def main():
 
                 cards.forEach(card => {{
                     const cardYear = card.dataset.year;
-                    const cardText = card.innerText.toLowerCase();
+                    const originalText = card.dataset.text;
+                    const textElement = card.querySelector(".thought-text");
 
                     const matchesYear = cardYear === selectedYear;
                     const matchesSearch =
-                        searchTerm === "" || cardText.includes(searchTerm);
+                        searchTerm === "" || originalText.toLowerCase().includes(searchTerm);
 
                     const isVisible = matchesYear && matchesSearch;
 
                     card.classList.toggle("hidden", !isVisible);
 
+                    if (searchTerm === "") {{
+                        textElement.innerHTML = originalText.replace(/\\n/g, "<br>");
+                    }} else {{
+                        const regex = new RegExp(`(${{escapeRegex(searchTerm)}})`, "gi");
+
+                        textElement.innerHTML = originalText
+                            .replace(regex, "<mark>$1</mark>")
+                            .replace(/\\n/g, "<br>");
+                    }}
+
                     if (isVisible) {{
                         visibleCount += 1;
-                        visibleWords += card
-                            .querySelector(".thought-text")
-                            .innerText
+                        visibleWords += originalText
                             .split(/\s+/)
                             .filter(Boolean)
                             .length;
