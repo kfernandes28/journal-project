@@ -2,6 +2,7 @@ from pathlib import Path
 import pandas as pd
 import html
 import json
+import webbrowser
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 
@@ -334,6 +335,8 @@ def main():
 
     print(f"Read: {DATA_PATH}")
     print(f"Wrote: {OUT_PATH}")
+
+    webbrowser.open(OUT_PATH.resolve().as_uri())
 
 
 if __name__ == "__main__":

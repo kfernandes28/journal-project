@@ -1,20 +1,32 @@
 from pathlib import Path
 import csv
+import subprocess
 from datetime import datetime
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CSV_PATH = PROJECT_ROOT / "Data" / "Thoughts.csv"
 
+today = datetime.today().strftime("%d/%m/%Y")
 
-date_input = input("Enter date (DD/MM/YYYY), or press Enter for today: ").strip()
+print("Journal Capture")
+print("----------------")
+
+date_input = input(f"\nDate (DD/MM/YYYY, Enter = today): [{today}] ").strip()
 
 if date_input:
     timestamp = datetime.strptime(date_input, "%d/%m/%Y").strftime("%d/%m/%Y")
 else:
-    timestamp = datetime.today().strftime("%d/%m/%Y")
+    timestamp = today
 
-thought = input("Paste thought: ").strip()
+print("\nCopy your thought to the clipboard first.")
+input("Press Enter to import from clipboard...")
+
+thought = subprocess.run(
+    ["pbpaste"],
+    capture_output=True,
+    text=True
+).stdout.strip()
 
 if not thought:
     print("No thought entered. Nothing saved.")
@@ -33,3 +45,12 @@ with CSV_PATH.open("a", newline="", encoding="utf-8") as file:
     writer.writerow([timestamp, thought])
 
 print("Thought saved.")
+
+print("Rebuilding dashboard...")
+
+subprocess.run(
+    ["python3", str(PROJECT_ROOT / "Scripts" / "build_dashboard.py")],
+    check=True
+)
+
+print("Dashboard updated.")
