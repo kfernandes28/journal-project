@@ -76,19 +76,15 @@ static HTML dashboard for exploration.
 
 ### Journal Dashboard
 
-```{=html}
-<!-- Add main dashboard screenshot here -->
-```
+Browse reflections by year with entry and word counts in a reading-focused interface.
+
+![Journal Dashboard](docs/screenshots/journal-dashboard.png)
+
 ### Search & Discovery
 
-```{=html}
-<!-- Add search/highlighting screenshot here -->
-```
-### Journal Capture
+Search within a selected year with dynamic result counts and highlighted matches.
 
-```{=html}
-<!-- Add terminal capture screenshot here -->
-```
+![Search and Discovery](docs/screenshots/search-discovery.png)
 
 ------------------------------------------------------------------------
 
