@@ -26,7 +26,7 @@ The biggest source of friction was not finding old thoughts—it was getting new
 **Goal:** Reduce journal capture to a single command while preserving the simplicity of the project.
 
 **What changed**
-- Replaced single-line terminal input with clipboard import using `pbpaste`.
+- Replaced single-line terminal input with platform-aware clipboard import for macOS and Windows.
 - Preserved multi-paragraph journal entries exactly as written.
 - Added a simple "Journal Capture" terminal interface.
 - Displayed today's date as the default while still allowing backdating.
