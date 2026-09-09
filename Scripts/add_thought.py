@@ -2,6 +2,7 @@ from pathlib import Path
 import csv
 import subprocess
 from datetime import datetime
+import platform
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -22,15 +23,30 @@ else:
 print("\nCopy your thought to the clipboard first.")
 input("Press Enter to import from clipboard...")
 
+system = platform.system()
+
+if system == "Darwin":
+    clipboard_command = ["pbpaste"]
+elif system == "Windows":
+    clipboard_command = ["powershell", "-command", "Get-Clipboard"]
+else:
+    raise RuntimeError(
+        "Journal capture currently supports macOS and Windows."
+    )
+
 thought = subprocess.run(
-    ["pbpaste"],
+    clipboard_command,
     capture_output=True,
     text=True
 ).stdout.strip()
-
 if not thought:
     print("No thought entered. Nothing saved.")
     exit()
+
+if not CSV_PATH.exists():
+    with CSV_PATH.open("w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["timestamp", "text"])
 
 # Ensure the existing CSV ends with a newline before appending as it was adding it as a new column instead
 with CSV_PATH.open("rb+") as file:
